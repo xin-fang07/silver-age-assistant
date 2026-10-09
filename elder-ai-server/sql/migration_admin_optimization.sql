@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS service_ticket (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  ticket_no VARCHAR(32) NOT NULL UNIQUE,
+  user_id BIGINT NULL,
+  type VARCHAR(30) NOT NULL COMMENT 'CONTACT/DELETION/FEEDBACK/CORRECTION/COMPLAINT',
+  subject VARCHAR(150) NOT NULL,
+  content TEXT NOT NULL,
+  contact_name VARCHAR(80) NULL,
+  contact_phone VARCHAR(30) NULL,
+  contact_email VARCHAR(120) NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/PROCESSING/RESOLVED/REJECTED/ARCHIVED',
+  priority VARCHAR(10) NOT NULL DEFAULT 'NORMAL',
+  handler_id BIGINT NULL,
+  process_remark VARCHAR(500) NULL,
+  resolved_at DATETIME NULL,
+  archived_at DATETIME NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_ticket_status_time(status, create_time), KEY idx_ticket_user(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE user ADD COLUMN last_login_time DATETIME NULL AFTER status,
+  ADD COLUMN disabled_reason VARCHAR(300) NULL AFTER last_login_time;
+ALTER TABLE system_log ADD COLUMN user_role VARCHAR(20) NULL AFTER username;
+ALTER TABLE news ADD COLUMN source_url VARCHAR(500) NULL AFTER cover_image,
+  ADD COLUMN scheduled_publish_time DATETIME NULL AFTER status,
+  ADD COLUMN published_at DATETIME NULL AFTER scheduled_publish_time,
+  ADD COLUMN updated_by BIGINT NULL AFTER publisher_id;
+CREATE TABLE IF NOT EXISTS news_revision (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT, news_id BIGINT NOT NULL, editor_id BIGINT NOT NULL,
+ snapshot LONGTEXT NOT NULL, create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ KEY idx_revision_news(news_id, create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

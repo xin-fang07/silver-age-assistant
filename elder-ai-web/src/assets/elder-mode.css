@@ -1,0 +1,176 @@
+/* ============================================================
+ * elder-mode.css - 银发模式（适老化）全局样式覆盖
+ * 当 <html> 带上 class="elder-mode" 时生效
+ * 目标：字体变大、按钮放大、图标放大、行距变宽、整页缩放 110%、高对比度
+ * 仅通过 CSS 覆盖实现，不改动任何组件逻辑与后端
+ * ============================================================ */
+
+/* ========== 整页缩放 110%（根元素 zoom，行为等同浏览器放大，固定定位元素同步缩放） ========== */
+html.elder-mode {
+  zoom: 1.1;
+}
+
+/* ========== 基础排版：更大字号 + 更宽行距 + 轻微字距 ========== */
+.elder-mode body {
+  font-size: 20px !important;
+  line-height: 2 !important;
+  letter-spacing: 0.5px;
+}
+
+/* ========== 高对比度配色（更深文字、更清晰边框） ========== */
+.elder-mode {
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #475569;
+  --color-border: #cbd5e1;
+  --color-border-light: #e2e8f0;
+  --color-primary: #2b6cb0;
+  --color-primary-dark: #1a4f86;
+}
+
+/* ========== Element Plus 组件放大 ========== */
+.elder-mode .el-button {
+  min-height: 56px !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  padding: 14px 32px !important;
+  border-radius: 14px !important;
+}
+.elder-mode .el-button--small {
+  min-height: 48px !important;
+  font-size: 18px !important;
+  padding: 10px 22px !important;
+}
+.elder-mode .el-input__wrapper {
+  min-height: 56px !important;
+}
+.elder-mode .el-input__inner {
+  font-size: 20px !important;
+  line-height: 1.6;
+}
+.elder-mode .el-textarea__inner {
+  font-size: 20px !important;
+  line-height: 1.8;
+  padding: 14px 18px;
+}
+.elder-mode .el-input-number {
+  width: 100% !important;
+}
+.elder-mode .el-menu-item,
+.elder-mode .el-sub-menu__title {
+  font-size: 20px !important;
+  min-height: 60px !important;
+  line-height: 60px !important;
+}
+.elder-mode .el-menu-item .el-icon {
+  font-size: 1.3em !important;
+}
+.elder-mode .el-form-item__label {
+  font-size: 19px !important;
+  font-weight: 600 !important;
+}
+.elder-mode .el-tabs__item {
+  font-size: 22px !important;
+  min-height: 56px !important;
+  line-height: 56px !important;
+  font-weight: 600 !important;
+}
+.elder-mode .el-tag {
+  font-size: 17px !important;
+  min-height: 38px !important;
+  line-height: 38px !important;
+  padding: 4px 16px !important;
+}
+.elder-mode .el-table,
+.elder-mode .el-table th.el-table__cell,
+.elder-mode .el-table td.el-table__cell {
+  font-size: 18px !important;
+}
+.elder-mode .el-card__body {
+  font-size: 19px !important;
+}
+.elder-mode .el-dialog {
+  border-radius: 24px !important;
+}
+.elder-mode .el-dialog__title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+}
+.elder-mode .el-dialog__body {
+  font-size: 19px !important;
+  line-height: 1.9 !important;
+}
+.elder-mode .el-message,
+.elder-mode .el-notification {
+  font-size: 19px !important;
+}
+.elder-mode .el-radio__label,
+.elder-mode .el-checkbox__label {
+  font-size: 19px !important;
+}
+.elder-mode .el-pagination,
+.elder-mode .el-pagination button,
+.elder-mode .el-pagination .el-pager li {
+  font-size: 18px !important;
+}
+.elder-mode .el-button .el-icon,
+.elder-mode .el-icon {
+  /* 让使用 1em 尺寸的图标随字号放大 */
+  font-size: 1.25em;
+}
+.elder-mode .el-step__title { font-size: 19px !important; }
+.elder-mode .el-step__description { font-size: 17px !important; }
+
+/* ========== 通用卡片/文字在银发模式下更醒目 ========== */
+.elder-mode .page-title,
+.elder-mode .block-title,
+.elder-mode .section-title,
+.elder-mode .card-title,
+.elder-mode .news-title,
+.elder-mode .group-label,
+.elder-mode .greet,
+.elder-mode .greeting {
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+/* ========== 朗读/悬浮球等固定元素在放大模式下更醒目 ========== */
+.elder-mode .health-fab {
+  width: 66px !important;
+  height: 66px !important;
+}
+
+/* ========== 高对比度与减少动画 ========== */
+html.high-contrast {
+  --color-bg-page: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #fff4cc;
+  --color-text-primary: #000000;
+  --color-text-secondary: #1f2937;
+  --color-text-muted: #374151;
+  --color-border: #111827;
+  --color-primary: #0047ab;
+  --color-primary-dark: #002f73;
+}
+.high-contrast .el-card,
+.high-contrast .el-input__wrapper,
+.high-contrast .el-button { border-width: 2px !important; }
+.high-contrast :focus-visible { outline: 4px solid #ffbf00 !important; outline-offset: 3px; }
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

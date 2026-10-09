@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    MyBatis Mapper XML 占位文件
+    本项目主要使用 MyBatis Plus 注解方式进行 CRUD 操作，无需在此处编写 XML 映射。
+    如有复杂联表查询需求，可在此目录下新增对应的 Mapper XML 文件，
+    并确保 namespace 与对应 Mapper 接口的全限定名一致。
+-->
+<mapper namespace="placeholder" />

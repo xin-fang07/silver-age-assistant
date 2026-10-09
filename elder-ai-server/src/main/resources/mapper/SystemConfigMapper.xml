@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.elderai.mapper.SystemConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.elderai.entity.SystemConfig">
+        <id column="id" property="id" />
+        <result column="config_key" property="configKey" />
+        <result column="config_value" property="configValue" />
+        <result column="config_type" property="configType" />
+        <result column="description" property="description" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <select id="selectByConfigType" resultMap="BaseResultMap">
+        SELECT * FROM system_config WHERE config_type = #{configType} AND deleted = 0 ORDER BY create_time DESC
+    </select>
+
+    <select id="listAdminUsers" parameterType="map" resultType="map">
+        SELECT u.* 
+        FROM user u 
+        <where>
+            u.role IN ('ADMIN', 'SUPER_ADMIN', 'OPERATOR')
+            <if test="keyword != null and keyword != ''">
+                AND (u.username LIKE #{keyword} OR u.nickname LIKE #{keyword2})
+            </if>
+            <if test="role != null and role != ''">
+                AND u.role = #{role}
+            </if>
+            <if test="status != null">
+                AND u.status = #{status}
+            </if>
+        </where>
+        ORDER BY u.create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAdminUsers" parameterType="map" resultType="Long">
+        SELECT COUNT(*) FROM user u 
+        <where>
+            u.role IN ('ADMIN', 'SUPER_ADMIN', 'OPERATOR')
+            <if test="keyword != null and keyword != ''">
+                AND (u.username LIKE #{keyword} OR u.nickname LIKE #{keyword2})
+            </if>
+            <if test="role != null and role != ''">
+                AND u.role = #{role}
+            </if>
+            <if test="status != null">
+                AND u.status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertAdminUser" parameterType="map">
+        INSERT INTO user (username, nickname, phone, role, password, status, create_time, update_time)
+        VALUES (#{username}, #{nickname}, #{phone}, #{role}, #{password}, #{status}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateAdminStatus" parameterType="map">
+        UPDATE user SET status = #{status}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="resetAdminPassword" parameterType="map">
+        UPDATE user SET password = #{password}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateAdminRole" parameterType="map">
+        UPDATE user SET role = #{role}, permissions = #{permissions}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <delete id="clearManagedElders" parameterType="map">
+        DELETE FROM family_binding WHERE managed_admin_id = #{adminId}
+    </delete>
+
+    <insert id="addManagedElder" parameterType="map">
+        INSERT INTO family_binding (elder_info_id, managed_admin_id, create_time)
+        VALUES (#{elderInfoId}, #{adminId}, #{createTime})
+    </insert>
+
+    <delete id="deleteAdminUser" parameterType="map">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+</mapper>

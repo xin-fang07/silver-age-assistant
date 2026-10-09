@@ -1,0 +1,31 @@
+spring:
+  mail:
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/elder_ai_assistant?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    # 本机开发数据库回退密码；部署环境必须通过 DB_PASSWORD 覆盖。
+    password: ${DB_PASSWORD:123456}
+
+mybatis-plus:
+  configuration:
+    # 默认不打印 SQL 参数，避免密码哈希、健康数据和联系方式进入控制台。
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+logging:
+  level:
+    com.example.elderai: ${APP_LOG_LEVEL:DEBUG}
+    com.example.elderai.mapper: ${MYBATIS_LOG_LEVEL:WARN}
+
+app:
+  mail:
+    notification-email: 2679078618@qq.com
+  jwt:
+    # 仅用于本机开发。生产环境必须启用 prod 配置并提供随机密钥。
+    secret: ${JWT_SECRET:dev-only-elder-ai-jwt-secret-change-me-2026}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+  deepseek:
+    api:
+      key: ${DEEPSEEK_API_KEY:sk-74cd61aecd3c46afbf92be38d199e40a}

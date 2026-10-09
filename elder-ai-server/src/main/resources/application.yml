@@ -1,0 +1,188 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  compression:
+    enabled: ${SERVER_COMPRESSION_ENABLED:true}
+    min-response-size: ${SERVER_COMPRESSION_MIN_SIZE:1KB}
+    mime-types: application/json,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
+  error:
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: elder-ai-server
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      # password: ${REDIS_PASSWORD:}
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT_MS:30000}
+      validation-timeout: ${DB_POOL_VALIDATION_TIMEOUT_MS:5000}
+      idle-timeout: ${DB_POOL_IDLE_TIMEOUT_MS:600000}
+      max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1800000}
+      keepalive-time: ${DB_POOL_KEEPALIVE_MS:300000}
+  task:
+    scheduling:
+      pool:
+        size: ${SCHEDULING_POOL_SIZE:5}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
+  mail:
+    host: ${MAIL_HOST:smtp.qq.com}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    default-encoding: UTF-8
+    properties:
+      mail.smtp:
+        auth: true
+        ssl.enable: true
+        socketFactory.class: javax.net.ssl.SSLSocketFactory
+        socketFactory.fallback: false
+        socketFactory.port: 465
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.example.elderai.entity
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [traceId=%X{traceId:-none}] %logger{36} - %msg%n"
+  level:
+    root: INFO
+    com.example.elderai: ${APP_LOG_LEVEL:INFO}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+      roles: ADMIN
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
+  health:
+    mail:
+      enabled: false
+    redis:
+      # 暂不使用 Redis：关闭健康检查探测，避免 Redis 未启动时刷 WARN 日志
+      enabled: false
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+    description: 银发智能生活助手 Java 服务
+
+# 缓存层开关：false 时 RedisCacheService 彻底跳过 Redis（不连接、不读写），全部降级为无缓存
+elder:
+  redis:
+    enabled: ${ELDER_REDIS_ENABLED:false}
+
+app:
+  instance-id: ${APP_INSTANCE_ID:}
+  deepseek:
+    api:
+      key: ${DEEPSEEK_API_KEY:}
+      url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1/chat/completions}
+      model: ${DEEPSEEK_MODEL:deepseek-chat}
+      connect-timeout-seconds: ${DEEPSEEK_CONNECT_TIMEOUT_SECONDS:15}
+      read-timeout-seconds: ${DEEPSEEK_READ_TIMEOUT_SECONDS:60}
+      write-timeout-seconds: ${DEEPSEEK_WRITE_TIMEOUT_SECONDS:30}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:86400000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+  health:
+    warning:
+      bp-systolic-high: ${BP_SYSTOLIC_HIGH:140}
+      bp-diastolic-high: ${BP_DIASTOLIC_HIGH:90}
+      bp-systolic-low: ${BP_SYSTOLIC_LOW:90}
+      bp-diastolic-low: ${BP_DIASTOLIC_LOW:60}
+      blood-sugar-high: ${BLOOD_SUGAR_HIGH:7.0}
+      blood-sugar-low: ${BLOOD_SUGAR_LOW:3.9}
+      heart-rate-high: ${HEART_RATE_HIGH:100}
+      heart-rate-low: ${HEART_RATE_LOW:60}
+      check-cron: ${HEALTH_WARNING_CHECK_CRON:0 0 * * * ?}
+  upload:
+    path: ${UPLOAD_PATH:uploads}
+    max-size: ${UPLOAD_MAX_SIZE:5242880}
+  mail:
+    notification-email: ${NOTIFICATION_EMAIL:}
+  emergency:
+    escalation-minutes: ${EMERGENCY_ESCALATION_MINUTES:5}
+    max-escalation-level: ${EMERGENCY_MAX_ESCALATION_LEVEL:3}
+    escalation-check-ms: ${EMERGENCY_ESCALATION_CHECK_MS:60000}
+  reminder:
+    expiration-grace-hours: ${REMINDER_EXPIRATION_GRACE_HOURS:24}
+    check-ms: ${REMINDER_CHECK_MS:60000}
+    family-alert-consecutive-misses: ${REMINDER_FAMILY_ALERT_CONSECUTIVE_MISSES:2}
+  scheduler:
+    lock:
+      enabled: ${SCHEDULER_LOCK_ENABLED:true}
+      reminder-at-most-seconds: ${REMINDER_LOCK_AT_MOST_SECONDS:300}
+      emergency-at-most-seconds: ${EMERGENCY_LOCK_AT_MOST_SECONDS:300}
+      health-warning-at-most-seconds: ${HEALTH_WARNING_LOCK_AT_MOST_SECONDS:4200}
+      health-warning-at-least-seconds: ${HEALTH_WARNING_LOCK_AT_LEAST_SECONDS:3300}
+  security:
+    trust-proxy-headers: ${TRUST_PROXY_HEADERS:false}
+    rate-limit:
+      enabled: ${RATE_LIMIT_ENABLED:true}
+      storage: ${RATE_LIMIT_STORAGE:jdbc}
+      cleanup:
+        interval-ms: ${RATE_LIMIT_CLEANUP_INTERVAL_MS:600000}
+        initial-delay-ms: ${RATE_LIMIT_CLEANUP_INITIAL_DELAY_MS:60000}
+        batch-size: ${RATE_LIMIT_CLEANUP_BATCH_SIZE:5000}
+      login:
+        max-requests: ${LOGIN_RATE_LIMIT_MAX:10}
+        window-seconds: ${LOGIN_RATE_LIMIT_WINDOW_SECONDS:60}
+      register:
+        max-requests: ${REGISTER_RATE_LIMIT_MAX:5}
+        window-seconds: ${REGISTER_RATE_LIMIT_WINDOW_SECONDS:3600}
+      ai:
+        max-requests: ${AI_RATE_LIMIT_MAX:20}
+        window-seconds: ${AI_RATE_LIMIT_WINDOW_SECONDS:60}
+      upload:
+        max-requests: ${UPLOAD_RATE_LIMIT_MAX:20}
+        window-seconds: ${UPLOAD_RATE_LIMIT_WINDOW_SECONDS:60}
